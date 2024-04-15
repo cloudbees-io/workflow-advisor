@@ -1,0 +1,24 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: build
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  go-build:
+    steps:
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+      - name: test
+        uses: docker://golang:1.22-alpine3.19
+        run: go test -cover ./...
+      - name: build
+        uses: docker://golang:1.22-alpine3.19
+        run: go build ./...
+      - name: scan
+        uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v2
+        with:
+          language: LANGUAGE_GO

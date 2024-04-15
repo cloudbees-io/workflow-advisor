@@ -1,0 +1,28 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: build
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  cs-test:
+    steps:
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+      - name: Create solution
+        run: |-
+          dotnet new sln -n all-projects
+          find . -name "*.csproj" -print0 | xargs -0 dotnet sln add
+        uses: docker://mcr.microsoft.com/dotnet/sdk:6.0
+      - name: Build
+        run: dotnet build ./all-projects.sln
+        uses: docker://mcr.microsoft.com/dotnet/sdk:6.0
+      - name: Test
+        run: dotnet test ./all-projects.sln
+        uses: docker://mcr.microsoft.com/dotnet/sdk:6.0
+      - name: Scan
+        uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v2
+        with:
+          language: LANGUAGE_DOTNET

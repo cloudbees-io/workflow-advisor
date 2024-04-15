@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/calculi-corp/workflow-advisor/main/advisor-output.scheme.json",
+    "title": "Workflow advisor output",
+    "description": "Output contains detected technologies and proposed workflow template",
+    "type": "object",
+    "properties": {
+      "workflow": {
+        "description": "Generated workflow content",
+        "type": "string"
+      },
+    "required": [ "workflow" ]
+  }
+}

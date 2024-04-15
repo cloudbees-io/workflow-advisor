@@ -1,0 +1,76 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name:  build
+
+on:
+  push:
+    branches:
+    - '**'
+
+permissions:
+  scm-token-own: read
+  scm-token-org: read
+  id-token: write
+
+jobs:
+  build:
+    if: ${{ vars.workflow_execution_env == 'production' }}
+    steps:
+    - name: Get source code
+      uses: cloudbees-io/checkout@v1
+    - name: Setup git credentials
+      uses: cloudbees-io/configure-git-global-credentials@v1
+      with:
+        repositories: calculi-corp/dsl-engine-cli, cloudbees-io/workflow-advisor
+    - id: build
+      name: Build
+      uses: docker://golang:1.21
+      run: |
+        set -eo pipefail
+        echo "________ BUILD ADVISOR ________"
+        CGO_ENABLED=0 GOOS=linux GOARCH=$(GOARCH) go build -buildvcs=false -a -tags netgo -ldflags '-X main.version=$(VERSION) -w -extldflags "-static"' -o advisor .
+        echo "________ TEST ADVISOR ________"
+        go test --cover ./...
+
+    - id: dockerhub
+      name: Login to Dockerhub using Cloudbees service account
+      uses: cloudbees-io/configure-oci-credentials@v1
+      with:
+        registry: docker.io
+        username: ${{ secrets.e5bbc3_dockerhub_user }}
+        password: ${{ secrets.e5bbc3_dockerhub_password }}
+
+    - id: oci-registry-login
+      name: Configure oci registry credentials
+      uses: cloudbees-io/configure-oci-credentials@v1
+      with:
+        registry: ${{ vars.STAGING_DOCKER_REGISTRY }}
+        username: ${{ secrets.STAGING_DOCKER_USERNAME }}
+        password: ${{ secrets.STAGING_DOCKER_PASSWORD }}
+
+    - id: push-image-harbor
+      name: Build image
+      uses: cloudbees-io/kaniko@v1
+      with:
+        dockerfile: Dockerfile
+        destination: ${{ vars.STAGING_IMAGE_REGISTRY}}/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.STAGING_IMAGE_REGISTRY) || '' }}
+        context: ${{ cloudbees.workspace }}
+
+    - name: Login to AWS
+      uses: cloudbees-io/configure-aws-credentials@v1
+      id: aws-login
+      with:
+        aws-region: us-east-1
+        role-to-assume: ${{ vars.oidc_staging_iam_role }}
+        role-duration-seconds: "3600" # optionally set the duration of the login token
+
+    - name: Configure container registry for Staging ECR
+      uses: cloudbees-io/configure-ecr-credentials@v1
+
+    - id: push-image
+      name: Build image
+      uses: cloudbees-io/kaniko@v1
+      with:
+        dockerfile: Dockerfile
+        destination: ${{ vars.staging_image_registry }}/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.staging_image_registry) || '' }}
+        context: ${{ cloudbees.workspace }}

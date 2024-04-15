@@ -1,0 +1,45 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name:  technology-scan
+
+jobs:
+  build:
+    steps:
+    - name: Get source code
+      uses: cloudbees-io/checkout@v1
+    - name: Setup git credentials
+      uses: cloudbees-io/configure-git-global-credentials@v1
+    - id: csharp
+      name: csharp
+      uses: docker://registry.saas-dev.beescloud.com/staging/workflow-advisor:latest
+      run: |
+        advisor -g csharp -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: js
+      name: js
+      uses: docker://registry.saas-dev.beescloud.com/staging/workflow-advisor:latest
+      run: |
+        advisor -g js -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: go
+      name: go
+      uses: docker://registry.saas-dev.beescloud.com/staging/workflow-advisor:latest
+      run: |
+        advisor -g go -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: java
+      name: java
+      uses: docker://registry.saas-dev.beescloud.com/staging/workflow-advisor:latest
+      run: |
+        advisor -g java -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: python
+      name: python
+      uses: docker://registry.saas-dev.beescloud.com/staging/workflow-advisor:latest
+      run: |
+        advisor -g python -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: finalize
+      name: finalize
+      uses: docker://mikefarah/yq
+      run: |
+        export content="$(cat ${RUNNER_TEMP}/test-workflow.yaml)"
+        yq eval -n '{"workflow": strenv(content)}' -o json 
+        yq eval -n '{"workflow": strenv(content)}' -o json  > $CLOUDBEES_OUTPUTS/result
+    outputs:
+      result: ${{ steps.finalize.outputs.result }}

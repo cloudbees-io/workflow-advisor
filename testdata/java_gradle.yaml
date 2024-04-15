@@ -1,0 +1,24 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: build
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  java-build:
+    steps:
+      - name: checkout
+        uses: cloudbees-io/checkout@v1
+      - name: gradle build
+        uses: docker://gradle:8.6-jdk21-alpine
+        run: gradle build
+      - name: gradle test
+        uses: docker://gradle:8.6-jdk21-alpine
+        run: gradle test
+      - name: scan
+        uses: cloudbees-io/sonarqube-bundled-sast-scan-code@v2
+        with:
+          language: JAVA

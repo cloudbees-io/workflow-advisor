@@ -40,22 +40,6 @@ jobs:
         username: ${{ secrets.e5bbc3_dockerhub_user }}
         password: ${{ secrets.e5bbc3_dockerhub_password }}
 
-    - id: oci-registry-login
-      name: Configure oci registry credentials
-      uses: cloudbees-io/configure-oci-credentials@v1
-      with:
-        registry: ${{ vars.STAGING_DOCKER_REGISTRY }}
-        username: ${{ secrets.STAGING_DOCKER_USERNAME }}
-        password: ${{ secrets.STAGING_DOCKER_PASSWORD }}
-
-    - id: push-image-harbor
-      name: Build image
-      uses: cloudbees-io/kaniko@v1
-      with:
-        dockerfile: Dockerfile
-        destination: ${{ vars.STAGING_IMAGE_REGISTRY}}/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.STAGING_IMAGE_REGISTRY) || '' }}
-        context: ${{ cloudbees.workspace }}
-
     - name: Login to AWS
       uses: cloudbees-io/configure-aws-credentials@v1
       id: aws-login

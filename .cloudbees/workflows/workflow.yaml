@@ -32,14 +32,6 @@ jobs:
         echo "________ TEST ADVISOR ________"
         go test --cover ./...
 
-    - id: dockerhub
-      name: Login to Dockerhub using Cloudbees service account
-      uses: cloudbees-io/configure-oci-credentials@v1
-      with:
-        registry: docker.io
-        username: ${{ secrets.e5bbc3_dockerhub_user }}
-        password: ${{ secrets.e5bbc3_dockerhub_password }}
-
     - name: Login to AWS
       uses: cloudbees-io/configure-aws-credentials@v1
       id: aws-login
@@ -58,3 +50,10 @@ jobs:
         dockerfile: Dockerfile
         destination: ${{ vars.staging_image_registry }}/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.staging_image_registry) || '' }}
         context: ${{ cloudbees.workspace }}
+        registry-mirrors: ${{ vars.staging_image_registry }}/docker-hub
+
+    - name: Run TruffleHog Container Action
+      uses: cloudbees-io/trufflehog-secret-scan-container@v1
+      with:
+        image-location: ${{ vars.staging_image_registry }}/workflow-advisor
+        image-tag: ${{ cloudbees.version }}

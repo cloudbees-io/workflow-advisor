@@ -24,7 +24,7 @@ jobs:
         repositories: calculi-corp/dsl-engine-cli, cloudbees-io/workflow-advisor
     - id: build
       name: Build
-      uses: docker://golang:1.24.1
+      uses: docker://golang:1.24.2
       run: |
         set -eo pipefail
         echo "________ BUILD ADVISOR ________"

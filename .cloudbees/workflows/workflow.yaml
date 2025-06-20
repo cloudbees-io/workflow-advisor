@@ -32,7 +32,7 @@ jobs:
         echo "________ TEST ADVISOR ________"
         go test --cover ./...
 
-    - name: Login to AWS
+    - name: Login to AWS Fake
       uses: cloudbees-io/configure-aws-credentials@v1
       id: aws-login
       with:

@@ -44,7 +44,7 @@ jobs:
       uses: cloudbees-io/configure-ecr-credentials@v1
 
     - id: push-image
-      name: Build image
+      name: Build with new kaniko image
       uses: cloudbees-io/kaniko@v1.1.17
       with:
         dockerfile: Dockerfile

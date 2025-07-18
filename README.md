@@ -25,6 +25,6 @@ Output is defined by json scheme [here](advisor-output.scheme.json)
 This code is made available under the 
 [MIT license](https://opensource.org/license/mit/.)
 
-### References
+### References 
 
 * Learn about [the CloudBees platform](https://docs.cloudbees.com/docs/cloudbees-saas-platform/latest/.)

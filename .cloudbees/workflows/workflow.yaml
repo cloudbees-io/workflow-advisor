@@ -28,7 +28,7 @@ jobs:
       run: |
         set -eo pipefail
         echo "________ BUILD ADVISOR ________"
-        CGO_ENABLED=0 GOOS=linux GOARCH=$(GOARCH) go build -buildvcs=false -a -tags netgo -ldflags '-X main.version=$(VERSION) -w -extldflags "-static"' -o advisor.
+        CGO_ENABLED=0 GOOS=linux GOARCH=$(GOARCH) go build -buildvcs=false -a -tags netgo -ldflags '-X main.version=$(VERSION) -w -extldflags "-static"' -o advisor .
         echo "________ TEST ADVISOR ________"
         go test --cover ./...
 

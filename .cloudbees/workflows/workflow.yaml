@@ -45,7 +45,7 @@ jobs:
 
     - id: push-image
       name: Build image
-      uses: cloudbees-io/kaniko@96bc375b4c940ce3f565d5375ebfed3e04ba4490
+      uses: cloudbees-io/kaniko@v1.1.18
       with:
         dockerfile: Dockerfile
         destination: ${{ vars.staging_image_registry }}/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.staging_image_registry) || '' }}

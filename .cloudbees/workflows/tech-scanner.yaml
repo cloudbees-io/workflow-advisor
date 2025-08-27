@@ -1,0 +1,47 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name:  technology-scan
+
+on: [push]
+
+jobs:
+  build:
+    steps:
+    - name: Get source code
+      uses: cloudbees-io/checkout@v1
+    - name: Setup git credentials
+      uses: cloudbees-io/configure-git-global-credentials@v1
+    - id: csharp
+      name: csharp
+      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      run: |
+        advisor -g csharp -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: js
+      name: js
+      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      run: |
+        advisor -g js -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: go
+      name: go
+      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      run: |
+        advisor -g go -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: java
+      name: java
+      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      run: |
+        advisor -g java -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: python
+      name: python
+      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      run: |
+        advisor -g python -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
+    - id: finalize
+      name: finalize
+      uses: docker://mikefarah/yq
+      run: |
+        export content="$(cat ${RUNNER_TEMP}/test-workflow.yaml)"
+        yq eval -n '{"workflow": strenv(content)}' -o json 
+        yq eval -n '{"workflow": strenv(content)}' -o json  > $CLOUDBEES_OUTPUTS/result
+    outputs:
+      result: ${{ steps.finalize.outputs.result }}

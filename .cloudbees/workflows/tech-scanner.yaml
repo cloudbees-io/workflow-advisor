@@ -13,27 +13,27 @@ jobs:
       uses: cloudbees-io/configure-git-global-credentials@v1
     - id: csharp
       name: csharp
-      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      uses: docker://public.ecr.aws/l7o7z1g8/services/workflow-advisor:0.0.122
       run: |
         advisor -g csharp -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
     - id: js
       name: js
-      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      uses: docker://public.ecr.aws/l7o7z1g8/services/workflow-advisor:0.0.122
       run: |
         advisor -g js -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
     - id: go
       name: go
-      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      uses: docker://public.ecr.aws/l7o7z1g8/services/workflow-advisor:0.0.122
       run: |
         advisor -g go -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
     - id: java
       name: java
-      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      uses: docker://public.ecr.aws/l7o7z1g8/services/workflow-advisor:0.0.122
       run: |
         advisor -g java -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
     - id: python
       name: python
-      uses: docker://020229604682.dkr.ecr.us-east-1.amazonaws.com/services/workflow-advisor:0.0.122
+      uses: docker://public.ecr.aws/l7o7z1g8/services/workflow-advisor:0.0.122
       run: |
         advisor -g python -w "${RUNNER_TEMP}/test-workflow.yaml" --src "${PWD}"
     - id: finalize

@@ -48,7 +48,7 @@ jobs:
       uses: cloudbees-io/kaniko@v1
       with:
         dockerfile: Dockerfile
-        destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.staging_image_registry) || '' }}
+        destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', vars.staging_image_registry) || '' }}
         context: ${{ cloudbees.workspace }}
         registry-mirrors: ${{ vars.staging_image_registry }}/docker-hub
 

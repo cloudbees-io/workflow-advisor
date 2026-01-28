@@ -24,7 +24,7 @@ jobs:
         repositories: calculi-corp/dsl-engine-cli, cloudbees-io/workflow-advisor
     - id: build
       name: Build
-      uses: docker://golang:1.25.5
+      uses: docker://golang:1.25.6
       run: |
         set -eo pipefail
         echo "________ BUILD ADVISOR ________"
@@ -51,6 +51,15 @@ jobs:
         destination: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/workflow-advisor:${{ cloudbees.version }}${{ cloudbees.scm.branch == 'main' && format(',{0}/workflow-advisor:latest', '020229604682.dkr.ecr.us-east-1.amazonaws.com/actions') || '' }}
         context: ${{ cloudbees.workspace }}
         registry-mirrors: ${{ vars.staging_image_registry }}/docker-hub
+
+    - id: slsa-attestation
+      name: Generate SLSA attestation
+      uses: calculi-corp/slsa-attestation@v1
+      with:
+        image-digest: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/workflow-advisor@${{ steps.push-image.outputs.digest }}
+        aws-role-to-assume: ${{ vars.oidc_staging_iam_role }}
+        aws-region: us-east-1
+        aws-kms-alias: cbp-dev-kms-key-cosign
 
     - name: Run TruffleHog Container Action
       uses: cloudbees-io/trufflehog-secret-scan-container@v1

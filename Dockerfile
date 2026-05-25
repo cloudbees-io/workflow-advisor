@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Stage 1: Obtain a shell using BusyBox
-FROM busybox:1.37.0-uclibc AS shell_builder
+FROM busybox:1.38.0-uclibc AS shell_builder
  # Use a BusyBox image with uclibc for static compilation
 RUN chmod +x /bin/sh
 

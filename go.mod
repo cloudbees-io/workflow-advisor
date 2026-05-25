@@ -1,6 +1,6 @@
 module github.com/calculi-corp/workflow-advisor
 
-go 1.26.2
+go 1.26.3
 
 require (
 	github.com/calculi-corp/dsl-engine-cli v0.0.0-20240229142136-dc77ca79f006

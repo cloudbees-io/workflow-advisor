@@ -41,4 +41,4 @@ jobs:
       uses: cloudbees-io/trufflehog-secret-scan-container@v1
       with:
         image-location: 020229604682.dkr.ecr.us-east-1.amazonaws.com/actions/workflow-advisor
-        image-tag: ${{ cloudbees.version }}
+        image-tag: ${{ cloudbees.scm.sha }}

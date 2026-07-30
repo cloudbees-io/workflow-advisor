@@ -27,6 +27,7 @@ jobs:
       id: buildimage
       uses: calculi-corp/cb-internal-shared-actions/build/action@v8
       with:
+        go-build-main: "."
         go-binary-build: "true"
         go-build-ldflags: "-X main.version=$(cloudbees.version)"
         go-binary-name: advisor

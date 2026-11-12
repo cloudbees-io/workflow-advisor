@@ -25,7 +25,7 @@ jobs:
         repositories: calculi-corp/dsl-engine-cli, cloudbees-io/workflow-advisor
     - name: Build, test, scan and push to ECR
       id: buildimage
-      uses: calculi-corp/cb-internal-shared-actions/build/action@v8
+      uses: calculi-corp/cb-internal-shared-actions/build/action@v9
       with:
         go-build-main: "."
         go-binary-build: "true"
